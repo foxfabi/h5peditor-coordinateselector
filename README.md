@@ -3,6 +3,8 @@ H5P Editor Coordinate Selector
 
 A visual coordinate selector for the H5P Editor. Wrapping leaflet JavaScript.
 
+Place the Marker on the desired location or use http://photon.komoot.de/ to search it.
+
 ## Usage
 
 In your semantics.json set:
