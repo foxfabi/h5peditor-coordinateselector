@@ -1,5 +1,30 @@
+.h5p-coordinate-selector {
+  position: relative;
+}
+
 .h5p-coordinateselector-map {
   width: 100%;
   height: 256px;
   cursor: crosshair;
+}
+
+.h5p-location-datalist {
+  display: block;
+  position: absolute;
+  z-index: 9999;
+  background: white;
+  left: 0;
+  right: 0;  
+}
+
+.h5p-location-datalist option {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff; 
+  border-bottom: 1px solid #d4d4d4; 
+}
+
+.h5p-location-datalist option:hover {
+  /*when hovering an item:*/
+  background-color: #e9e9e9; 
 }
