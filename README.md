@@ -2,6 +2,7 @@ H5P Editor Coordinate Selector
 ==============================
 
 A visual coordinate selector for the H5P Editor. Wrapping leaflet JavaScript.
+It provide also the mapSelector widget to use different maps in GeoQuiz. 
 
 Place the Marker on the desired location or use http://photon.komoot.de/ to search it.
 
@@ -10,7 +11,9 @@ Place the Marker on the desired location or use http://photon.komoot.de/ to sear
 In your semantics.json set:
 ```json
 "widget": "coordinateSelector"
+"widget": "mapSelector"
 ```
+
 
 ## License
 

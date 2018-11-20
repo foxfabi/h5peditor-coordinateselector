@@ -16,6 +16,9 @@
     },
     {
       "path": "scripts/coordinate-selector.js"
+    },
+    {
+      "path": "scripts/map-selector.js"
     }
   ],
   "preloadedCss": [
