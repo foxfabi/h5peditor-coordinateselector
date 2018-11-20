@@ -52,6 +52,7 @@ H5PEditor.widgets.coordinateSelector = H5PEditor.CoordinateSelector = (function 
       'class': 'h5peditor-label',
       html: self.field.label
     }).appendTo(self.$container);
+
     // Add description:
     $('<span>', {
       'class': 'h5peditor-field-description',
@@ -194,7 +195,7 @@ H5PEditor.widgets.coordinateSelector = H5PEditor.CoordinateSelector = (function 
       // Force language
       // &osm_tag=place:city&osm_tag=place:locality
       // &osm_tag=tourism
-      var url = "http://photon.komoot.de/api/?q=" + value + "&lang=en&limit=6&osm_tag=place";
+      var url = "//photon.komoot.de/api/?q=" + value + "&lang=en&limit=6&osm_tag=place";
       $.getJSON( url )
           .done(function( data ) {
             $.each( data, function( key, val ) {
