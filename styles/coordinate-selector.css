@@ -29,3 +29,13 @@
   /*when hovering an item:*/
   background-color: #e9e9e9; 
 }
+
+.leaflet-top,
+.leaflet-bottom,
+.leaflet-pane {
+  z-index:99;
+}
+
+.h5p-mapselector-options {
+  margin: 0;
+}
