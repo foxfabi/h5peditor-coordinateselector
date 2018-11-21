@@ -83,7 +83,9 @@ H5PEditor.widgets.mapSelector = H5PEditor.MapSelector = (function ($) {
     
     // Wrapper for radio buttons
     var $options = $('<div class="h5p-mapselector-options">').appendTo(self.$container); 
-    var s = $('<select />');
+    var s = $('<select>', {
+      'id': "map-selector-" + self.ID,
+    });
     for(var val in self.mapTypes) {
         $('<option />', {value: val, text: self.mapTypes[val]}).appendTo(s);
     }
@@ -98,59 +100,74 @@ H5PEditor.widgets.mapSelector = H5PEditor.MapSelector = (function ($) {
     setTimeout(function() {
       // Create map preview widget
       self.map = L.map("map-" + self.ID, {
-        dragging: false
+        dragging: false,
+        boxZoom: false,
+        doubleClickZoom: false,
+        touchZoom: false,
+        scrollWheelZoom: false,
+        zoomControl: false
       });
-      self.map.setView([46.980252, 8.041992], 11);
-
-      switch (self.defaultValue) {
-        case 'CartoDB.VoyagerNoLabels':
-          self.mapLayer = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-            subdomains: 'abcd',
-            maxZoom: 19
-          });
-          break;
-        case 'Hydda.Base':
-          self.mapLayer = L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/base/{z}/{x}/{y}.png', {
-            maxZoom: 18,
-            attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          });
-          break;
-        case 'Stamen.Watercolor':
-          self.mapLayer = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}', {
-            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-            subdomains: 'abcd',
-            minZoom: 1,
-            maxZoom: 16,
-            ext: 'png'
-          });
-          break;
-        case 'Stamen.TerrainBackground':
-          self.mapLayer = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain-background/{z}/{x}/{y}{r}.{ext}', {
-            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-            subdomains: 'abcd',
-            minZoom: 0,
-            maxZoom: 18,
-            ext: 'png'
-          });
-          break;
-        case 'Esri.WorldImagery':
-          self.mapLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-          });
-          break;
-        default:
-          self.mapLayer = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-            subdomains: 'abcd',
-            maxZoom: 19
-          });
-          break;
-      }
-      self.map.addLayer(self.mapLayer);
+      self.map.setView([46.980252, 8.041992], 8);
+      self.setMapType();
     }, 200);
+    
+    $( "#map-selector-" + self.ID ).change(function() {
+      self.defaultValue = this.value;
+      self.map.removeLayer(self.mapLayer); 
+      self.setMapType();
+    });
+    
   };
 
+  MapSelector.prototype.setMapType = function() {
+    var self = this;
+    switch (self.defaultValue) {
+      case 'CartoDB.VoyagerNoLabels':
+        self.mapLayer = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+          subdomains: 'abcd',
+          maxZoom: 19
+        });
+        break;
+      case 'Hydda.Base':
+        self.mapLayer = L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/base/{z}/{x}/{y}.png', {
+          maxZoom: 18,
+          attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        });
+        break;
+      case 'Stamen.Watercolor':
+        self.mapLayer = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}', {
+          attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+          subdomains: 'abcd',
+          minZoom: 1,
+          maxZoom: 16,
+          ext: 'png'
+        });
+        break;
+      case 'Stamen.TerrainBackground':
+        self.mapLayer = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain-background/{z}/{x}/{y}{r}.{ext}', {
+          attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+          subdomains: 'abcd',
+          minZoom: 0,
+          maxZoom: 18,
+          ext: 'png'
+        });
+        break;
+      case 'Esri.WorldImagery':
+        self.mapLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        });
+        break;
+      default:
+        self.mapLayer = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+          subdomains: 'abcd',
+          maxZoom: 19
+        });
+        break;
+    }
+    self.map.addLayer(self.mapLayer);    
+  }
   MapSelector.prototype.uniqueID = function () {
     return 'xxxxxxxxxxxx9xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
       var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);

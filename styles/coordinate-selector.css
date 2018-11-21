@@ -2,6 +2,7 @@
   position: relative;
 }
 
+.h5p-mapselector-map,
 .h5p-coordinateselector-map {
   width: 100%;
   height: 256px;
