@@ -29,18 +29,24 @@ H5PEditor.widgets.mapSelector = H5PEditor.MapSelector = (function ($) {
      * Keeps track of class parameters
      * @type {Object}
      */
+
     this.params = $.extend({}, params);
     this.setValue = setValue;
     this.ID = this.uniqueID();
-
+    /**
+     * Keeps track of selected map type parameter
+     * @type {String}
+     */
+    this.defaultValue = "";
+    
     /**
      * Keeps track of available map types
      * @type {Array}
      */
     this.mapTypes = {
         'CartoDB.VoyagerNoLabels': 'CartoDB - VoyagerNoLabels',
-        'Hydda.Base': 'Hydda - Base',
         'Stamen.Watercolor': 'Stamen - Watercolor',
+        'Hydda.Base': 'Hydda - Base',
         'Stamen.TerrainBackground': 'Stamen - TerrainBackground',
         'Esri.WorldImagery': 'Esri - WorldImagery',
     }
@@ -71,25 +77,15 @@ H5PEditor.widgets.mapSelector = H5PEditor.MapSelector = (function ($) {
       html: self.field.description
     }).appendTo(self.$container);
 
-    if (self.params !== undefined) {
-      var defaultValue = "CartoDB.VoyagerNoLabels";
-      $.each(self.params, function( key, value ) {
-        self.defaultValue += value;
-      });
-      if (self.defaultValue !== "") {
-        // FIXME: self.$mapSelector.val(defaultValue);
-      }
-    }
-    
-    // Wrapper for radio buttons
+    // Wrapper for select options
     var $options = $('<div class="h5p-mapselector-options">').appendTo(self.$container); 
-    var s = $('<select>', {
+    var selector = $('<select>', {
       'id': "map-selector-" + self.ID,
     });
     for(var val in self.mapTypes) {
-        $('<option />', {value: val, text: self.mapTypes[val]}).appendTo(s);
+        $('<option />', {value: val, text: self.mapTypes[val]}).appendTo(selector);
     }
-    s.appendTo($options);
+    selector.appendTo($options);
 
     self.mapContainer = $('<div>', {
       'class': 'h5p-mapselector-map',
@@ -97,25 +93,41 @@ H5PEditor.widgets.mapSelector = H5PEditor.MapSelector = (function ($) {
     }).appendTo(self.$container);
     self.$container.appendTo($wrapper);
 
-    setTimeout(function() {
-      // Create map preview widget
-      self.map = L.map("map-" + self.ID, {
-        dragging: false,
-        boxZoom: false,
-        doubleClickZoom: false,
-        touchZoom: false,
-        scrollWheelZoom: false,
-        zoomControl: false
-      });
-      self.map.setView([46.980252, 8.041992], 8);
-      self.setMapType();
-    }, 200);
+    // Create map preview widget
+    self.map = L.map("map-" + self.ID, {
+      dragging: false,
+      boxZoom: false,
+      doubleClickZoom: false,
+      touchZoom: false,
+      scrollWheelZoom: false,
+      zoomControl: false
+    });
+    self.map.setView([46.980252, 8.041992], 8);
+    
     
     $( "#map-selector-" + self.ID ).change(function() {
       self.defaultValue = this.value;
-      self.map.removeLayer(self.mapLayer); 
+      self.params = self.defaultValue;
+      self.setValue(self.field, self.defaultValue);
+      if (self.mapLayer !== undefined) {
+        self.map.removeLayer(self.mapLayer); 
+      }
       self.setMapType();
     });
+    
+    $("#map-selector-" + self.ID).val(self.field.default);
+
+    if (self.params !== undefined) {
+      self.defaultValue = "";
+      $.each(self.params, function( key, value ) {
+        self.defaultValue += value;
+      });
+      if (self.defaultValue !== "") {
+        $("#map-selector-" + self.ID).val(self.defaultValue);
+      }
+    }
+    self.setMapType();
+
     
   };
 
